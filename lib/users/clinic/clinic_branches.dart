@@ -52,8 +52,10 @@ class MyBranchesScreen extends StatelessWidget {
                     Text('Specialty: ${branch['specialty']}'),
                   Text('Location: ${branch['location']}'),
                   Text('Phone: ${branch['phone']}'),
-                  Text('Cancellation Policy: ${branch['cancellationPolicy']} Hours'),
-                  Text('Time Slot Interval: ${branch['timeSlotInterval']} Minutes'),
+                  Text(
+                      'Cancellation Policy: ${branch['cancellationPolicy']} Hours'),
+                  Text(
+                      'Time Slot Interval: ${branch['timeSlotInterval']} Minutes'),
                   Text(
                     'Services: ${branch['services'].join(", ")}',
                   ),
@@ -64,9 +66,7 @@ class MyBranchesScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => RegisterBranchScreen(
-                      role: role,
-                    ),
+                    builder: (context) => ClinicRegisterBranchScreen(),
                   ),
                 );
               },

@@ -1,0 +1,15 @@
+annotated-types==0.7.0
+bcrypt==4.2.1
+inflect==7.4.0
+more-itertools==10.5.0
+pydantic==2.10.4
+pydantic_core==2.27.2
+PyMySQL==1.1.1
+python-dotenv==1.0.1
+sqlacodegen==2.3.0.post1
+SQLAlchemy==1.4.54
+typeguard==4.4.1
+typing_extensions==4.12.2
+sqlalchemy<2.0
+fastapi
+uvicorn

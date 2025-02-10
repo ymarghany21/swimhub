@@ -3,6 +3,8 @@ import '../../profile/profile_page.dart';
 import '../clinic/clinic_service_page.dart';
 import '../clinic/clinic_bookings_screen.dart';
 import '../clinic/clinic_register_branch.dart';
+import '../clinic/clinic_manual_bookings.dart';
+import '../clinic/clinic_branches.dart';
 
 class ClinicHomePage extends StatefulWidget {
   const ClinicHomePage({super.key});
@@ -13,7 +15,6 @@ class ClinicHomePage extends StatefulWidget {
 
 class _ClinicHomePageState extends State<ClinicHomePage>
     with TickerProviderStateMixin {
-  final String userRole = 'Clinic';
   AnimationController? animationController;
   bool multiple = true;
 
@@ -28,17 +29,27 @@ class _ClinicHomePageState extends State<ClinicHomePage>
       {
         'title': 'My Services',
         'icon': Icons.design_services,
-        'screen': MyServicesScreen(role: 'Clinic')
+        'screen': MyServicesScreen(role: 'Clinic'),
       },
       {
         'title': 'Bookings',
         'icon': Icons.calendar_today,
-        'screen': BookingsScreen()
+        'screen': ClinicBookingsScreen(),
       },
       {
         'title': 'Register Clinic',
         'icon': Icons.add_business,
-        'screen': RegisterBranchScreen(role: 'Clinic')
+        'screen': ClinicRegisterBranchScreen(),
+      },
+      {
+        'title': 'Manual Bookings', // Added manual bookings button
+        'icon': Icons.book_online,
+        'screen': ClinicManualBookingsScreen(),
+      },
+      {
+        'title': 'My Branches', // Added my branches button
+        'icon': Icons.account_tree,
+        'screen': MyBranchesScreen(role: 'Clinic'),
       },
     ];
 
