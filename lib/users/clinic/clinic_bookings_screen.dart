@@ -8,9 +8,9 @@ class ClinicBookingsScreen extends StatefulWidget {
 
 class _ClinicBookingsScreenState extends State<ClinicBookingsScreen> {
   DateTime selectedDate = DateTime.now();
-  String selectedBranch = "City Medical Center";
+  String selectedBranch = "All"; // Default selection is "All"
 
-  final List<String> branches = ["City Medical Center", "Downtown Clinic", "Health & Wellness Clinic"];
+  final List<String> branches = ["All", "City Medical Center", "Downtown Clinic", "Health & Wellness Clinic"];
 
   final List<Map<String, dynamic>> bookings = [
     {
@@ -49,12 +49,12 @@ class _ClinicBookingsScreenState extends State<ClinicBookingsScreen> {
   @override
   Widget build(BuildContext context) {
     List<Map<String, dynamic>> filteredBookings = bookings.where((booking) {
-      return booking['branch'] == selectedBranch;
+      return selectedBranch == "All" || booking['branch'] == selectedBranch;
     }).toList();
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Clinic Bookings"),
+        title: const Text("Clinic Bookings"),
         centerTitle: true,
       ),
       body: Column(
@@ -74,8 +74,8 @@ class _ClinicBookingsScreenState extends State<ClinicBookingsScreen> {
                     });
                   },
                   child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-                    padding: EdgeInsets.all(10),
+                    margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                    padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       color: selectedDate.day == date.day ? Colors.blue : Colors.grey[200],
                       borderRadius: BorderRadius.circular(10),
@@ -90,7 +90,7 @@ class _ClinicBookingsScreenState extends State<ClinicBookingsScreen> {
                               fontWeight: FontWeight.bold,
                               color: selectedDate.day == date.day ? Colors.white : Colors.black),
                         ),
-                        SizedBox(height: 5),
+                        const SizedBox(height: 5),
                         Text(
                           date.day.toString(),
                           style: TextStyle(
@@ -106,7 +106,7 @@ class _ClinicBookingsScreenState extends State<ClinicBookingsScreen> {
             ),
           ),
 
-          // Branch Selector (Like the Image - Horizontal Scroll)
+          // Branch Selector (Horizontal Scroll)
           Container(
             height: 50,
             child: ListView.builder(
@@ -121,8 +121,8 @@ class _ClinicBookingsScreenState extends State<ClinicBookingsScreen> {
                     });
                   },
                   child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: 8),
-                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                    margin: const EdgeInsets.symmetric(horizontal: 8),
+                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                     decoration: BoxDecoration(
                       color: selectedBranch == branch ? Colors.blue : Colors.white,
                       borderRadius: BorderRadius.circular(20),
@@ -140,12 +140,12 @@ class _ClinicBookingsScreenState extends State<ClinicBookingsScreen> {
             ),
           ),
 
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
 
           // List of Time Slots (Cards)
           Expanded(
             child: filteredBookings.isEmpty
-                ? Center(
+                ? const Center(
                     child: Text(
                       "No bookings available for this day.",
                       style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -156,35 +156,35 @@ class _ClinicBookingsScreenState extends State<ClinicBookingsScreen> {
                     itemBuilder: (context, index) {
                       final booking = filteredBookings[index];
                       return Card(
-                        margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                         elevation: 3,
                         child: Padding(
-                          padding: EdgeInsets.all(12),
+                          padding: const EdgeInsets.all(12),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               // Time Slot & Branch Name
                               Text(
                                 "${booking['branch']}",
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                               ),
                               Text(
                                 "Time: ${booking['time']}",
-                                style: TextStyle(fontSize: 16, color: Colors.black54),
+                                style: const TextStyle(fontSize: 16, color: Colors.black54),
                               ),
-                              SizedBox(height: 5),
+                              const SizedBox(height: 5),
 
                               // Table Header
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
+                                children: const [
                                   Expanded(child: Text("Bed", style: TextStyle(fontWeight: FontWeight.bold))),
                                   Expanded(child: Text("Client", style: TextStyle(fontWeight: FontWeight.bold))),
                                   Expanded(child: Text("Contact", style: TextStyle(fontWeight: FontWeight.bold))),
                                   Expanded(child: Text("Service(s)", style: TextStyle(fontWeight: FontWeight.bold))),
                                 ],
                               ),
-                              Divider(),
+                              const Divider(),
 
                               // Bed-wise Patient List
                               Column(

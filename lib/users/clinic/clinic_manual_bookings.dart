@@ -11,11 +11,23 @@ class _ClinicManualBookingsScreenState extends State<ClinicManualBookingsScreen>
   String selectedBranch = "City Medical Center";
   String selectedBed = "Bed 1";
 
-  // Mocked branch settings: Number of beds & time slot intervals
+  // Mocked branch settings: Number of beds, working hours & time slot intervals
   final Map<String, dynamic> branchSettings = {
-    "City Medical Center": {"beds": ["Bed 1", "Bed 2"], "interval": 30}, // 30-minute intervals
-    "Downtown Clinic": {"beds": ["Bed 1", "Bed 2", "Bed 3"], "interval": 60}, // 60-minute intervals
-    "Health & Wellness Clinic": {"beds": ["Bed 1"], "interval": 45}, // 45-minute intervals
+    "City Medical Center": {
+      "beds": ["Bed 1", "Bed 2"],
+      "interval": 30, // 30-minute intervals
+      "workingHours": {"start": "08:00 AM", "end": "06:00 PM"},
+    },
+    "Downtown Clinic": {
+      "beds": ["Bed 1", "Bed 2", "Bed 3"],
+      "interval": 60, // 60-minute intervals
+      "workingHours": {"start": "09:00 AM", "end": "05:00 PM"},
+    },
+    "Health & Wellness Clinic": {
+      "beds": ["Bed 1"],
+      "interval": 45, // 45-minute intervals
+      "workingHours": {"start": "07:00 AM", "end": "07:00 PM"},
+    },
   };
 
   Map<String, Set<String>> blockedSlots = {}; // Slots blocked by the clinic
@@ -25,17 +37,19 @@ class _ClinicManualBookingsScreenState extends State<ClinicManualBookingsScreen>
   Widget build(BuildContext context) {
     List<String> beds = branchSettings[selectedBranch]?["beds"] ?? ["Bed 1"];
     int interval = branchSettings[selectedBranch]?["interval"] ?? 30;
+    Map<String, String> workingHours = branchSettings[selectedBranch]?["workingHours"] ??
+        {"start": "08:00 AM", "end": "06:00 PM"};
 
-    // Generate time slots based on interval
-    List<String> timeSlots = _generateTimeSlots(interval);
+    // Generate time slots dynamically based on working hours & interval
+    List<String> timeSlots = _generateTimeSlots(workingHours, interval);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Manual Bookings"),
+        title: const Text("Manual Bookings"),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.save),
+            icon: const Icon(Icons.save),
             onPressed: _saveBlockedSlots,
           ),
         ],
@@ -43,7 +57,7 @@ class _ClinicManualBookingsScreenState extends State<ClinicManualBookingsScreen>
       body: Column(
         children: [
           // Date Picker Row
-          Container(
+          SizedBox(
             height: 80,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
@@ -57,8 +71,8 @@ class _ClinicManualBookingsScreenState extends State<ClinicManualBookingsScreen>
                     });
                   },
                   child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-                    padding: EdgeInsets.all(10),
+                    margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                    padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       color: selectedDate.day == date.day ? Colors.blue : Colors.grey[200],
                       borderRadius: BorderRadius.circular(10),
@@ -73,7 +87,7 @@ class _ClinicManualBookingsScreenState extends State<ClinicManualBookingsScreen>
                               fontWeight: FontWeight.bold,
                               color: selectedDate.day == date.day ? Colors.white : Colors.black),
                         ),
-                        SizedBox(height: 5),
+                        const SizedBox(height: 5),
                         Text(
                           date.day.toString(),
                           style: TextStyle(
@@ -91,31 +105,60 @@ class _ClinicManualBookingsScreenState extends State<ClinicManualBookingsScreen>
 
           // Branch Selector
           DropdownButtonFormField<String>(
-            decoration: InputDecoration(labelText: "Select Branch"),
+            decoration: const InputDecoration(labelText: "Select Branch"),
             value: selectedBranch,
-            onChanged: (value) => setState(() => selectedBranch = value!),
+            onChanged: (value) {
+              setState(() {
+                selectedBranch = value!;
+                selectedBed = branchSettings[selectedBranch]?["beds"][0] ?? "Bed 1"; // Reset to first bed
+              });
+            },
             items: branchSettings.keys.map((branch) {
               return DropdownMenuItem(value: branch, child: Text(branch));
             }).toList(),
           ),
 
-          // Bed Selector
-          DropdownButtonFormField<String>(
-            decoration: InputDecoration(labelText: "Select Bed"),
-            value: selectedBed,
-            onChanged: (value) => setState(() => selectedBed = value!),
-            items: beds.map((bed) {
-              return DropdownMenuItem(value: bed, child: Text(bed));
-            }).toList(),
+          // Bed Selector (Iterative like Date Selector)
+          SizedBox(
+            height: 50,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: beds.length,
+              itemBuilder: (context, index) {
+                String bed = beds[index];
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      selectedBed = bed;
+                    });
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 8),
+                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                    decoration: BoxDecoration(
+                      color: selectedBed == bed ? Colors.blue : Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: Colors.blue),
+                    ),
+                    child: Text(
+                      bed,
+                      style: TextStyle(
+                          color: selectedBed == bed ? Colors.white : Colors.blue,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                );
+              },
+            ),
           ),
 
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
 
           // Time Slots Grid
           Expanded(
             child: GridView.builder(
-              padding: EdgeInsets.all(10),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              padding: const EdgeInsets.all(10),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3, // Three columns for a grid layout
                 childAspectRatio: 2,
                 crossAxisSpacing: 5,
@@ -132,9 +175,7 @@ class _ClinicManualBookingsScreenState extends State<ClinicManualBookingsScreen>
                     setState(() {
                       if (isBooked) return; // Clinics cannot unblock booked slots
 
-                      if (!blockedSlots.containsKey(selectedBed)) {
-                        blockedSlots[selectedBed] = {};
-                      }
+                      blockedSlots[selectedBed] ??= {};
                       if (isBlocked) {
                         blockedSlots[selectedBed]?.remove(timeSlot);
                       } else {
@@ -146,10 +187,10 @@ class _ClinicManualBookingsScreenState extends State<ClinicManualBookingsScreen>
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       color: isBooked
-                          ? Colors.green // Booked via the app (Clinics cannot change this)
+                          ? Colors.green // 🟩 Booked via the app (Clinics cannot change this)
                           : isBlocked
-                              ? Colors.red // Blocked by the clinic
-                              : Colors.blue[100], // Free slot
+                              ? Colors.red // 🟥 Blocked by the clinic
+                              : Colors.blue[100], // 🟦 Free slot
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
@@ -169,11 +210,11 @@ class _ClinicManualBookingsScreenState extends State<ClinicManualBookingsScreen>
     );
   }
 
-  // Generate time slots dynamically based on interval setting
-  List<String> _generateTimeSlots(int interval) {
+  // Generate time slots dynamically based on working hours & interval setting
+  List<String> _generateTimeSlots(Map<String, String> workingHours, int interval) {
     List<String> timeSlots = [];
-    DateTime startTime = DateTime(2023, 1, 1, 6, 0); // Start at 6:00 AM
-    DateTime endTime = DateTime(2023, 1, 1, 20, 0); // End at 8:00 PM
+    DateTime startTime = _parseTime(workingHours["start"]!);
+    DateTime endTime = _parseTime(workingHours["end"]!);
 
     while (startTime.isBefore(endTime)) {
       timeSlots.add(DateFormat.jm().format(startTime));
@@ -183,9 +224,14 @@ class _ClinicManualBookingsScreenState extends State<ClinicManualBookingsScreen>
     return timeSlots;
   }
 
+  DateTime _parseTime(String time) {
+    final format = DateFormat.jm(); // 12-hour format with AM/PM
+    return format.parse(time);
+  }
+
   void _saveBlockedSlots() {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Blocked slots saved successfully!")),
+      const SnackBar(content: Text("Blocked slots saved successfully!")),
     );
   }
 }

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../profile/profile_page.dart';
 import '../clinic/clinic_service_page.dart';
 import '../clinic/clinic_bookings_screen.dart';
-import '../clinic/clinic_register_branch.dart';
 import '../clinic/clinic_manual_bookings.dart';
 import '../clinic/clinic_branches.dart';
 
